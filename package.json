@@ -1,0 +1,22 @@
+{
+  "name": "bakbakserver",
+  "version": "1.0.0",
+  "description": "Basic Chat App using socketio. Lessss goo",
+  "license": "ISC",
+  "author": "Avisekh Sabi",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
