@@ -3,19 +3,23 @@ import bodyParser from "body-parser";
 import http from "http";
 import cors from "cors";
 import { Server } from "socket.io";
-import { SocketAddress } from "net";
 import connectToDB from "./db/index.js";
-
-const PORT = 5000;
+import { PORT } from "./const.js";
 
 const app = express();
 
+import signup from "./routes/signup.js";
+import morgan from "morgan";
+
+// middlewares
+app.use(bodyParser.json());
 app.use(
   cors({
     origin: ["http://localhost:5173", "http://10.53.88.118:5173"], // your frontend
   })
 );
 
+//socket
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -37,9 +41,11 @@ io.on("connection", (socket) => {
   });
 });
 
-app.get("/", (req, res) => {
-  res.send("NEW");
-});
+app.use(morgan("dev"));
+//routes
+app.use("/api/signup", signup);
+
+//connections
 server.listen(PORT, async () => {
   console.log(`Server running at http://localhost:${PORT}`);
   try {
