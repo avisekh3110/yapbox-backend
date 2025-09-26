@@ -9,5 +9,6 @@ export default async function connectToDB() {
     );
   } catch (e) {
     console.log("Error connecting to db", e);
+    throw e; //connected to db prints even if the connectio is failed
   }
 }

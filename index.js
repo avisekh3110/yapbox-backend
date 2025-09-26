@@ -9,6 +9,7 @@ import { PORT } from "./const.js";
 const app = express();
 
 import signup from "./routes/signup.js";
+import signin from "./routes/signin.js";
 import morgan from "morgan";
 
 // middlewares
@@ -42,14 +43,17 @@ io.on("connection", (socket) => {
 });
 
 app.use(morgan("dev"));
+
 //routes
 app.use("/api/signup", signup);
+app.use("/api/signin", signin);
 
 //connections
 server.listen(PORT, async () => {
   console.log(`Server running at http://localhost:${PORT}`);
   try {
-    await connectToDB().then(console.log("Connected to DB"));
+    await connectToDB();
+    console.log("Connected to DB");
   } catch (e) {
     console.log("Connection Error");
   }
