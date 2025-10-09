@@ -5,18 +5,25 @@ import cors from "cors";
 import { Server } from "socket.io";
 import connectToDB from "./db/index.js";
 import { PORT } from "./const.js";
-
-const app = express();
-
+import morgan from "morgan";
+import cookieParser from "cookie-parser";
 import signup from "./routes/signup.js";
 import signin from "./routes/signin.js";
-import morgan from "morgan";
+import refresh from "./routes/refresh.js";
+const app = express();
 
 // middlewares
 app.use(bodyParser.json());
+app.use(cookieParser());
+
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://10.53.88.118:5173"], // your frontend
+    origin: [
+      "http://localhost:5173",
+      "https://yapbox.vercel.app",
+      "https://5nl6xqc8-5000.inc1.devtunnels.ms",
+    ],
+    credentials: true,
   })
 );
 
@@ -24,8 +31,13 @@ app.use(
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173", "http://10.53.88.118:5173"],
+    origin: [
+      "http://localhost:5173",
+      "https://yapbox.vercel.app",
+      "https://5nl6xqc8-5000.inc1.devtunnels.ms",
+    ],
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
 
@@ -47,6 +59,7 @@ app.use(morgan("dev"));
 //routes
 app.use("/api/signup", signup);
 app.use("/api/signin", signin);
+app.use("/api/refresh", refresh);
 
 //connections
 server.listen(PORT, async () => {

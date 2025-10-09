@@ -6,10 +6,19 @@ import UserSignup from "../validation/signupValidate.js";
 
 const router = express.Router();
 
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
   const { userName, email, password } = req.body;
 
   try {
+    // Check if username or email already exists
+    const existingUser = await UserModel.findOne({
+      $or: [{ email }, { userName }],
+    });
+
+    if (existingUser) {
+      return res.status(409).send("Username or Email already exists");
+    }
+
     const validatedUser = UserSignup.parse({ userName, email, password });
     res.json({ user: validatedUser }); //!
 
@@ -18,7 +27,6 @@ router.post("/", (req, res) => {
     user
       .save()
       .then((res) => {
-        //!
         console.log(res);
       })
       .catch((err) => {

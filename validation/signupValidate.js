@@ -1,7 +1,7 @@
 import * as z from "zod";
 
 const UserSignup = z.object({
-  userName: z.string(),
+  userName: z.string().lowercase({ message: "Username must is be lowercase" }),
   email: z.string().email({ message: "Bad email." }),
   password: z
     .string()
