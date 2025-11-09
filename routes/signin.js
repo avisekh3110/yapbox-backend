@@ -33,8 +33,11 @@ router.post("/", async (req, res) => {
     }
 
     const sessionId = uuidv4();
-    setUser(sessionId, { userName: user.userName, email: user.email });
-    res.cookie("uid", sessionId, {
+    const token = setUser(sessionId, {
+      userName: user.userName,
+      email: user.email,
+    });
+    res.cookie("uid", token, {
       httpOnly: false,
       secure: false, // true in production
       sameSite: "lax", // allow cross-site

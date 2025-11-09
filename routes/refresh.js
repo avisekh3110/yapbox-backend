@@ -7,12 +7,16 @@ const router = express.Router();
 router.post("/", async (req, res) => {
   try {
     const { uid } = req.cookies;
+    console.log(uid);
     if (!uid) return res.status(401).send("No session token");
 
     const sessionUser = getUser(uid);
+    console.log(sessionUser);
     if (!sessionUser) return res.status(401).send("Invalid or expired token");
 
     const { userName, email } = sessionUser;
+    console.log({ userName, email });
+
     const user = await UserModel.findOne({ userName: userName, email: email });
     console.log(user);
     if (!user) {

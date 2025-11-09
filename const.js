@@ -7,3 +7,4 @@ config({
 export const db_username = process.env.db_username;
 export const db_password = process.env.db_password;
 export const PORT = 8080 || process.env.PORT;
+export const jwt_signature = process.env.jwt_signature;
