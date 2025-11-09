@@ -10,6 +10,7 @@ import cookieParser from "cookie-parser";
 import signup from "./routes/signup.js";
 import signin from "./routes/signin.js";
 import refresh from "./routes/refresh.js";
+import information from "./routes/information.js";
 const app = express();
 
 // middlewares
@@ -18,11 +19,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://yapbox.vercel.app",
-      "https://5nl6xqc8-5000.inc1.devtunnels.ms",
-    ],
+    origin: ["http://localhost:5173", "https://yapbox.vercel.app"],
     credentials: true,
   })
 );
@@ -31,11 +28,7 @@ app.use(
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: [
-      "http://localhost:5173",
-      "https://yapbox.vercel.app",
-      "https://5nl6xqc8-5000.inc1.devtunnels.ms",
-    ],
+    origin: ["http://localhost:5173", "https://yapbox.vercel.app"],
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -57,6 +50,7 @@ io.on("connection", (socket) => {
 app.use(morgan("dev"));
 
 //routes
+app.use("/", information);
 app.use("/api/signup", signup);
 app.use("/api/signin", signin);
 app.use("/api/refresh", refresh);
