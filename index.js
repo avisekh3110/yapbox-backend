@@ -19,7 +19,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: ["*"],
+    origin: ["http://localhost:5173", "https://yapbox.vercel.app"],
     credentials: true,
   })
 );
@@ -28,7 +28,7 @@ app.use(
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: ["*"],
+    origin: ["http://localhost:5173", "https://yapbox.vercel.app"],
     methods: ["GET", "POST"],
     credentials: true,
   },
