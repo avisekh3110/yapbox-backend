@@ -18,14 +18,19 @@ router.post("/", async (req, res) => {
   console.log(userQuery);
   //not valid
   if (!userQuery.success) {
-    return res.status(400).json(userQuery.error.message);
+    return res.status(400).json({
+      errors: userQuery.error.errors.map((e) => ({
+        path: e.path[0],
+        message: e.message,
+      })),
+    });
   }
   //valid
   try {
     const user = await UserModel.findOne({ email: userQuery.data.email });
     // Early return if user not found
     if (!user) {
-      return res.status(401).send("User not found");
+      return res.status(404).send("User not found");
     }
 
     //user found
@@ -40,14 +45,16 @@ router.post("/", async (req, res) => {
       email: user.email,
     });
     res.cookie("uid", token, {
-      httpOnly: false,
-      secure: false, // true in production
-      sameSite: "lax", // allow cross-site
-      expires: new Date(Date.now() + 48 * 60 * 60 * 1000), // 1 day
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      expires: new Date(Date.now() + 48 * 60 * 60 * 1000),
     });
+
     return res.status(200).json({ username: user.userName, email: user.email });
   } catch (err) {
-    res.status(500).json({ message: "Server error", error: err });
+    console.error("Error at /signin:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 });
 
