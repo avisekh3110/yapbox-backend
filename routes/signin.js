@@ -11,8 +11,11 @@ const router = express.Router();
 
 router.post("/", async (req, res) => {
   const { email, password } = req.body;
+  console.log(email);
+  console.log(password);
 
   const userQuery = Usersignin.safeParse({ email, password });
+  console.log(userQuery);
   //not valid
   if (!userQuery.success) {
     return res.status(400).json(userQuery.error.message);
@@ -20,10 +23,9 @@ router.post("/", async (req, res) => {
   //valid
   try {
     const user = await UserModel.findOne({ email: userQuery.data.email });
-
     // Early return if user not found
     if (!user) {
-      return res.status(404).send("User not found");
+      return res.status(401).send("User not found");
     }
 
     //user found

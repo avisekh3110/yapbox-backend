@@ -19,7 +19,11 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://yapbox.vercel.app"],
+    origin: [
+      "http://10.135.42.118:5173",
+      "http://localhost:5173",
+      "https://yapbox.vercel.app",
+    ],
     credentials: true,
   })
 );
@@ -28,12 +32,19 @@ app.use(
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173", "https://yapbox.vercel.app"],
+    origin: [
+      "http://10.135.42.118:5173",
+      "http://localhost:5173",
+      "https://yapbox.vercel.app",
+    ],
     methods: ["GET", "POST"],
     credentials: true,
   },
   transports: ["websocket", "polling"],
 });
+
+const userToSocketId = new Map();
+const socketIdToUser = new Map();
 
 io.on("connection", (socket) => {
   console.log("Client connected:", socket.id);
@@ -41,6 +52,31 @@ io.on("connection", (socket) => {
   socket.on("user-message", (message) => {
     io.emit("message", message);
     console.log(message);
+  });
+
+  socket.on("join-room", (data) => {
+    const { callId, username } = data;
+    userToSocketId.set(username, socket.id);
+    socketIdToUser.set(socket.id, username);
+    io.to(callId).emit("user-joined", { username, id: socket.id });
+    socket.join(callId);
+    io.to(socket.id).emit("join-room", { callId, username });
+  });
+
+  socket.on("user-call", ({ to, offer }) => {
+    io.to(to).emit("incomming-call", { from: socket.id, offer });
+  });
+
+  socket.on("call-accepted", ({ to, ans }) => {
+    io.to(to).emit("call-accepted", { from: socket.id, ans });
+  });
+
+  socket.on("peer-nego-needed", ({ offer, to }) => {
+    io.to(to).emit("peer-nego-needed", { from: socket.is, offer });
+  });
+
+  socket.on("peer-nego-done", ({ to, ans }) => {
+    io.to(to).emit("peer-nego-done", { from: socket.id, ans });
   });
 
   socket.on("disconnect", () => {
