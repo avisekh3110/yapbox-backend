@@ -20,7 +20,7 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: [
-      "http://10.135.42.118:5173",
+      "https://2zl1f572-5173.inc1.devtunnels.ms",
       "http://localhost:5173",
       "https://yapbox.vercel.app",
     ],
@@ -33,7 +33,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: [
-      "http://10.135.42.118:5173",
+      "https://2zl1f572-5173.inc1.devtunnels.ms",
       "http://localhost:5173",
       "https://yapbox.vercel.app",
     ],
@@ -64,19 +64,23 @@ io.on("connection", (socket) => {
   });
 
   socket.on("user-call", ({ to, offer }) => {
+    console.log("offer recieved!!");
     io.to(to).emit("incomming-call", { from: socket.id, offer });
   });
 
   socket.on("call-accepted", ({ to, ans }) => {
+    console.log("Call accepted");
     io.to(to).emit("call-accepted", { from: socket.id, ans });
   });
 
-  socket.on("peer-nego-needed", ({ offer, to }) => {
+  socket.on("peer-nego-needed", ({ to, offer }) => {
+    console.log("start nego");
     io.to(to).emit("peer-nego-needed", { from: socket.id, offer });
   });
 
   socket.on("peer-nego-done", ({ to, ans }) => {
-    io.to(to).emit("peer-nego-done", { from: socket.id, ans });
+    console.log("final nego");
+    io.to(to).emit("peer-nego-final", { from: socket.id, ans });
   });
 
   socket.on("disconnect", () => {
